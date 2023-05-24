@@ -1,30 +1,7 @@
 import cpp
 import semmle.code.cpp.dataflow.DataFlow
 import semmle.code.cpp.rangeanalysis.SimpleRangeAnalysis
-
-from AllocationExpr buffer, ArrayExpr access, Expr accessIdx, int bufferSize, Expr bufferSizeExpr
-where
-  // malloc (100)
-  // ^^^^^^^^^^^^ AllocationExpr buffer
-  //
-  // buf[...]
-  // ^^^  ArrayExpr access
-  //
-  // buf[...]
-  //     ^^^  int accessIdx
-  //
-  accessIdx = access.getArrayOffset() and
-  //
-  // malloc (100)
-  //         ^^^ allocSizeExpr / bufferSize
-  //
-  getAllocConstantExpr(bufferSizeExpr, bufferSize) and
-  // Ensure buffer access is to the correct allocation.
-  DataFlow::localExprFlow(buffer, access.getArrayBase()) and
-  // Ensure use refers to the correct size defintion, even for non-constant
-  // expressions.  
-  DataFlow::localExprFlow(bufferSizeExpr, buffer.getSizeExpr())
-  //
+// ...
 select bufferSizeExpr, buffer, access, accessIdx, upperBound(accessIdx) as accessMax, bufferSize,
   access.getArrayBase().getUnspecifiedType().(PointerType).getBaseType() as arrayBaseType,
   access.getArrayBase().getUnspecifiedType().(PointerType).getBaseType().getSize() as arrayTypeSize,

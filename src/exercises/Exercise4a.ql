@@ -1,26 +1,6 @@
 import cpp
 import semmle.code.cpp.dataflow.DataFlow
-
-from AllocationExpr buffer, ArrayExpr access, int accessIdx, int bufferSize, Expr bufferSizeExpr
-where
-  // malloc (100)
-  // ^^^^^^^^^^^^ AllocationExpr buffer
-  //
-  // buf[...]
-  // ^^^  ArrayExpr access
-  //
-  // buf[...]
-  //     ^^^  int accessIdx
-  //
-  accessIdx = access.getArrayOffset().getValue().toInt() and
-  getAllocConstantExpr(bufferSizeExpr, bufferSize) and
-  // Ensure buffer access refers to the matching allocation
-  // ensureSameFunction(buffer, access.getArrayBase()) and
-  DataFlow::localExprFlow(buffer, access.getArrayBase()) and
-  // Ensure buffer access refers to the matching allocation
-  // ensureSameFunction(bufferSizeExpr, buffer.getSizeExpr()) and
-  DataFlow::localExprFlow(bufferSizeExpr, buffer.getSizeExpr()) 
-  //
+// ...
 select buffer, access, accessIdx, access.getArrayOffset(), bufferSize, bufferSizeExpr
 
 /**

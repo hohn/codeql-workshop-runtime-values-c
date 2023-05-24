@@ -1,28 +1,7 @@
 import cpp
 import semmle.code.cpp.dataflow.DataFlow
 import semmle.code.cpp.rangeanalysis.SimpleRangeAnalysis
-
-from
-  AllocationExpr buffer, ArrayExpr access, int bufferSize, Expr bufferSizeExpr,
-  int maxAccessedIndex, int allocatedUnits
-where
-  // malloc (100)
-  // ^^^^^^^^^^^^ AllocationExpr buffer
-  getAllocConstantExpr(bufferSizeExpr, bufferSize) and
-  // Ensure buffer access is to the correct allocation.
-  DataFlow::localExprFlow(buffer, access.getArrayBase()) and
-  // Ensure use refers to the correct size defintion, even for non-constant
-  // expressions.  
-  DataFlow::localExprFlow(bufferSizeExpr, buffer.getSizeExpr()) and
-  // computeIndices(access, buffer, bufferSize, allocatedUnits, maxAccessedIndex)
-  computeAllocationSize(buffer, bufferSize, allocatedUnits) and
-  computeMaxAccess(access, maxAccessedIndex)
-  // only consider out-of-bounds
-  and 
-  maxAccessedIndex >= allocatedUnits
-select access,
-  "Array access at or beyond size; have " + allocatedUnits + " units, access at " + maxAccessedIndex
-
+// ...
 // select bufferSizeExpr, buffer, access, allocatedUnits, maxAccessedIndex
 
 /**
